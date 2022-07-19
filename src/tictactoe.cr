@@ -31,19 +31,19 @@ end
 def two_player_game
   board = Board.new
   game_over = false
-  until game_over
-    board.print
-    player_one_move = gets
-    exit if player_one_move == "exit"
-  end
+  # until game_over
+  board.print
+  # player_one_move = gets
+  # exit if player_one_move == "exit"
+  # end
 end
 
 class Board
   def initialize
     @data = [
       ['X', 'O', 'X'],
-      [' ', ' ', ' '],
-      [' ', ' ', ' '],
+      ['O', 'X', 'O'],
+      ['X', 'O', 'X'],
     ]
     @columns = ['A', 'B', 'C']
     @rows = ['1', '2', '3']
@@ -54,23 +54,25 @@ class Board
 
     i = 0
     while i < @columns.size
-      curr_board += @columns[i] + " "
+      curr_board += @columns[i]
+      curr_board += "   " if i < @columns.size - 1
       i += 1
     end
 
-    curr_board += '\n'
+    curr_board += "\n   -----------\n"
 
     i = 0
     while i < @data.size
-      curr_board += @rows[i] + " [ "
+      curr_board += @rows[i] + " | "
       j = 0
       while j < @data[i].size
-        curr_board += @data[i][j] + " "
+        curr_board += @data[i][j]
+        curr_board += " | " if j < @data[i].size - 1
         j += 1
       end
-      curr_board += "]"
+
+      curr_board += "\n  | ----------\n" if i < @data.size - 1
       i += 1
-      curr_board += "\n"
     end
 
     puts curr_board
