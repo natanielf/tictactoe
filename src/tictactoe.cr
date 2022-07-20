@@ -31,11 +31,34 @@ end
 def two_player_game
   board = Board.new
   game_over = false
-  # until game_over
-  board.print
-  # player_one_move = gets
-  # exit if player_one_move == "exit"
-  # end
+  until game_over
+    board.print
+    puts "\n"
+    puts "Enter Player 1's move (X):"
+    until input_is_valid(input = gets)
+      puts "Input \"#{input}\" is invalid. Please try again."
+      puts "Examples of valid coordinates: A2, C1, 3B, etc."
+    end
+  end
+end
+
+def input_is_valid(input)
+  return false if input.nil? || input.empty?
+  exit if input.lstrip.rstrip.downcase == "exit"
+
+  input = input.lstrip.rstrip.upcase
+  return false if input.size != 2
+
+  if /[^ABC]/ =~ input
+    puts "starts with a letter"
+  elsif /[^1-3]/ =~ input
+    puts "starts with a number"
+  end
+
+  return true
+end
+
+def parse_input
 end
 
 class Board
