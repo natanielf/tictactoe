@@ -37,7 +37,7 @@ def two_player_game
     board.handle_move('X')
     board.print
     puts "\n"
-    puts "Enter Player 2's move (X):"
+    puts "Enter Player 2's move (O):"
     board.handle_move('O')
   end
 end
@@ -84,11 +84,11 @@ class Board
 
   def handle_move(symbol)
     orig_input = gets
-    return false if orig_input.nil? || orig_input.empty?
+    return if orig_input.nil? || orig_input.empty?
     input = orig_input.lstrip.rstrip.upcase
     exit if input == "exit"
 
-    return false if input.size != 2
+    return if input.size != 2
 
     first_char = input[0]
     second_char = input[1]
@@ -115,13 +115,18 @@ class Board
       end
     end
 
-    until has_valid_letter && has_valid_number && !row.nil? && !col.nil? && cell_is_open(row, col)
-      puts "Input \"#{orig_input}\" is invalid. Please try again."
-      puts "Examples of valid coordinates: a2, c1, 3B, etc."
+    if has_valid_letter && has_valid_number && !row.nil? && !col.nil? && cell_is_open(row, col)
+      move(row, col, symbol)
+      return true
+    else
+      print_error(orig_input)
       handle_move(symbol)
     end
+  end
 
-    move(row, col, symbol)
+  def print_error(input)
+    puts "Input \"#{input}\" is invalid. Please try again."
+    puts "Examples of valid coordinates: a2, c1, 3B, etc."
   end
 
   def cell_is_open(row, col)
@@ -134,7 +139,7 @@ class Board
   end
 
   def game_over
-    return true if full()
+    return true if full
     # Implement win/loss logic
   end
 
@@ -149,7 +154,6 @@ class Board
       end
       row += 1
     end
-    puts empty_cells
     return empty_cells == 0
   end
 end
