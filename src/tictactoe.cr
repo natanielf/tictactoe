@@ -30,43 +30,24 @@ end
 
 def two_player_game
   board = Board.new
-  game_over = false
-  until game_over
+  until board.game_over
     board.print
     puts "\n"
     puts "Enter Player 1's move (X):"
-    until input_is_valid(input = gets)
-      puts "Input \"#{input}\" is invalid. Please try again."
-      puts "Examples of valid coordinates: A2, C1, 3B, etc."
-    end
+    board.handle_move('X')
+    board.print
+    puts "\n"
+    puts "Enter Player 2's move (X):"
+    board.handle_move('O')
   end
-end
-
-def input_is_valid(input)
-  return false if input.nil? || input.empty?
-  exit if input.lstrip.rstrip.downcase == "exit"
-
-  input = input.lstrip.rstrip.upcase
-  return false if input.size != 2
-
-  if /[^ABC]/ =~ input
-    puts "starts with a letter"
-  elsif /[^1-3]/ =~ input
-    puts "starts with a number"
-  end
-
-  return true
-end
-
-def parse_input
 end
 
 class Board
   def initialize
     @data = [
-      ['X', 'O', 'X'],
-      ['O', 'X', 'O'],
-      ['X', 'O', 'X'],
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
     ]
     @columns = ['A', 'B', 'C']
     @rows = ['1', '2', '3']
@@ -99,5 +80,76 @@ class Board
     end
 
     puts curr_board
+  end
+
+  def handle_move(symbol)
+    orig_input = gets
+    return false if orig_input.nil? || orig_input.empty?
+    input = orig_input.lstrip.rstrip.upcase
+    exit if input == "exit"
+
+    return false if input.size != 2
+
+    first_char = input[0]
+    second_char = input[1]
+
+    has_valid_letter = false
+    has_valid_number = false
+
+    row = nil
+    col = nil
+
+    if first_char.ascii_letter?
+      has_valid_letter = first_char.in_set?("A-C")
+      has_valid_number = second_char.in_set?("1-3")
+      if has_valid_letter && has_valid_number
+        row = second_char.to_i
+        col = (first_char.ord - 64).to_i
+      end
+    elsif first_char.ascii_number?
+      has_valid_number = first_char.in_set?("1-3")
+      has_valid_letter = second_char.in_set?("A-C")
+      if has_valid_letter && has_valid_number
+        row = first_char.to_i
+        col = (second_char.ord - 64).to_i
+      end
+    end
+
+    until has_valid_letter && has_valid_number && !row.nil? && !col.nil? && cell_is_open(row, col)
+      puts "Input \"#{orig_input}\" is invalid. Please try again."
+      puts "Examples of valid coordinates: a2, c1, 3B, etc."
+      handle_move(symbol)
+    end
+
+    move(row, col, symbol)
+  end
+
+  def cell_is_open(row, col)
+    return false if row.nil? || col.nil?
+    return @data[row - 1][col - 1] == ' '
+  end
+
+  def move(row, col, symbol)
+    @data[row - 1][col - 1] = symbol
+  end
+
+  def game_over
+    return true if full()
+    # Implement win/loss logic
+  end
+
+  def full
+    empty_cells = 9
+    row = 0
+    while row < 3
+      col = 0
+      while col < 3
+        empty_cells -= 1 if @data[row][col] != ' '
+        col += 1
+      end
+      row += 1
+    end
+    puts empty_cells
+    return empty_cells == 0
   end
 end
