@@ -84,11 +84,19 @@ class Board
 
   def handle_move(symbol)
     orig_input = gets
-    return if orig_input.nil? || orig_input.empty?
-    input = orig_input.lstrip.rstrip.upcase
-    exit if input == "exit"
 
-    return if input.size != 2
+    if orig_input.nil? || orig_input.empty?
+      print_error(orig_input)
+      handle_move(symbol)
+      return
+    elsif orig_input.strip.size != 2
+      exit if orig_input.strip.downcase == "exit"
+      print_error(orig_input)
+      handle_move(symbol)
+      return
+    end
+
+    input = orig_input.strip.upcase
 
     first_char = input[0]
     second_char = input[1]
