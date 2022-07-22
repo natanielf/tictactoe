@@ -35,7 +35,6 @@ struct Game
   property result = Result::None
 
   def two_player
-    # board = Board.new
     until over
       board.print
       puts "\n"
@@ -47,8 +46,7 @@ struct Game
       puts "Enter Player 2's move (O):"
       board.handle_move('O')
     end
-    puts "\n----------\n"
-    puts "GAME OVER"
+    puts "\n--------------"
 
     case result
     when .tie?
@@ -58,12 +56,77 @@ struct Game
     when .o?
       puts "Player 2 wins!"
     end
+
+    puts "\n--------------"
+    puts "Restart? (y/n)"
+    input = gets
+    return if input.nil?
+    if input.strip.downcase == "y"
+      reset
+      two_player
+    end
   end
 
   def over
     @result = Result::Tie if board.full
-    # Implement win/loss logic
+    check_winner
     return @result != Result::None
+  end
+
+  def set_winner(symbol)
+    case symbol
+    when 'X'
+      @result = Result::X
+    when 'O'
+      @result = Result::O
+    end
+  end
+
+  def check_winner
+    a_1 = board.get_value(0, 0)
+    if a_1 != ' '
+      if a_1 == board.get_value(0, 1) == board.get_value(0, 2) || a_1 == board.get_value(1, 1) == board.get_value(2, 2) || a_1 == board.get_value(1, 0) == board.get_value(2, 0)
+        set_winner(a_1)
+        return
+      end
+    end
+
+    b_1 = board.get_value(0, 1)
+    if b_1 != ' '
+      if b_1 == board.get_value(1, 1) == board.get_value(2, 1)
+        set_winner(b_1)
+        return
+      end
+    end
+
+    c_1 = board.get_value(0, 2)
+    if c_1 != ' '
+      if c_1 == board.get_value(1, 1) == board.get_value(2, 0) || c_1 == board.get_value(1, 2) == board.get_value(2, 2)
+        set_winner(c_1)
+        return
+      end
+    end
+
+    a_2 = board.get_value(1, 0)
+    if a_2 != ' '
+      if a_2 == board.get_value(1, 1) == board.get_value(1, 2)
+        set_winner(a_2) 
+        return
+      end
+    end
+
+    a_3 = board.get_value(2, 0)
+    if a_3 != ' '
+      if a_3 == board.get_value(2, 1) == board.get_value(2, 2)
+        set_winner(a_3)
+        return
+      end
+    end
+  end
+
+  def reset
+    board.reset
+    @result = Result::None
   end
 end
 
@@ -165,6 +228,10 @@ class Board
     return @data[row - 1][col - 1] == ' '
   end
 
+  def get_value(row, col)
+    return @data[row][col]
+  end
+
   def move(row, col, symbol)
     @data[row - 1][col - 1] = symbol
   end
@@ -181,6 +248,14 @@ class Board
       row += 1
     end
     return empty_cells == 0
+  end
+
+  def reset
+    @data = [
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+      [' ', ' ', ' '],
+    ]
   end
 end
 
