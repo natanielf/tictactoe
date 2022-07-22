@@ -1,5 +1,7 @@
 require "option_parser"
 
+game = Game.new
+
 module Tictactoe
   VERSION = "0.1.0"
 
@@ -13,7 +15,7 @@ module Tictactoe
     end
 
     parser.on "-t", "--two", "Two player game" do
-      two_player_game()
+      game.two_player
     end
 
     parser.on "-v", "--version", "Show version" do
@@ -28,30 +30,51 @@ module Tictactoe
   end
 end
 
-def two_player_game
-  board = Board.new
-  until board.game_over
-    board.print
-    puts "\n"
-    puts "Enter Player 1's move (X):"
-    board.handle_move('X')
-    board.print
-    puts "\n"
-    puts "Enter Player 2's move (O):"
-    board.handle_move('O')
+struct Game
+  property board = Board.new
+  property result = Result::None
+
+  def two_player
+    # board = Board.new
+    until over
+      board.print
+      puts "\n"
+      puts "Enter Player 1's move (X):"
+      board.handle_move('X')
+      board.print
+      break if over
+      puts "\n"
+      puts "Enter Player 2's move (O):"
+      board.handle_move('O')
+    end
+    puts "\n----------\n"
+    puts "GAME OVER"
+
+    case result
+    when .tie?
+      puts "Game is tied."
+    when .x?
+      puts "Player 1 wins!"
+    when .o?
+      puts "Player 2 wins!"
+    end
+  end
+
+  def over
+    @result = Result::Tie if board.full
+    # Implement win/loss logic
+    return @result != Result::None
   end
 end
 
 class Board
-  def initialize
-    @data = [
-      [' ', ' ', ' '],
-      [' ', ' ', ' '],
-      [' ', ' ', ' '],
-    ]
-    @columns = ['A', 'B', 'C']
-    @rows = ['1', '2', '3']
-  end
+  property data = [
+    [' ', ' ', ' '],
+    [' ', ' ', ' '],
+    [' ', ' ', ' '],
+  ]
+  property columns = ['A', 'B', 'C']
+  property rows = ['1', '2', '3']
 
   def print
     curr_board = "    "
@@ -146,11 +169,6 @@ class Board
     @data[row - 1][col - 1] = symbol
   end
 
-  def game_over
-    return true if full
-    # Implement win/loss logic
-  end
-
   def full
     empty_cells = 9
     row = 0
@@ -164,4 +182,11 @@ class Board
     end
     return empty_cells == 0
   end
+end
+
+enum Result
+  None
+  Tie
+  X
+  O
 end
