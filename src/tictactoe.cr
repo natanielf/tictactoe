@@ -40,15 +40,17 @@ struct Game
       puts "\n"
       puts "Enter Player 1's move (X):"
       board.handle_move('X')
-      board.print
       break if over
+      board.print
       puts "\n"
       puts "Enter Player 2's move (O):"
       board.handle_move('O')
     end
+    board.print
+
     puts "\n--------------"
 
-    case result
+    case @result
     when .tie?
       puts "Game is tied."
     when .x?
@@ -85,40 +87,24 @@ struct Game
   def check_winner
     a_1 = board.get_value(0, 0)
     if a_1 != ' '
-      if a_1 == board.get_value(0, 1) == board.get_value(0, 2) || a_1 == board.get_value(1, 1) == board.get_value(2, 2) || a_1 == board.get_value(1, 0) == board.get_value(2, 0)
+      if a_1 == board.get_value(0, 1) == board.get_value(0, 2) || a_1 == board.get_value(1, 0) == board.get_value(2, 0)
         set_winner(a_1)
         return
       end
     end
 
-    b_1 = board.get_value(0, 1)
-    if b_1 != ' '
-      if b_1 == board.get_value(1, 1) == board.get_value(2, 1)
-        set_winner(b_1)
+    b_2 = board.get_value(1, 1)
+    if b_2 != ' '
+      if b_2 == board.get_value(0, 1) == board.get_value(2, 1) || b_2 == board.get_value(1, 0) == board.get_value(1, 2) || b_2 == board.get_value(0, 0) == board.get_value(2, 2) || b_2 == board.get_value(0, 2) == board.get_value(2, 0)
+        set_winner(b_2)
         return
       end
     end
 
-    c_1 = board.get_value(0, 2)
-    if c_1 != ' '
-      if c_1 == board.get_value(1, 1) == board.get_value(2, 0) || c_1 == board.get_value(1, 2) == board.get_value(2, 2)
-        set_winner(c_1)
-        return
-      end
-    end
-
-    a_2 = board.get_value(1, 0)
-    if a_2 != ' '
-      if a_2 == board.get_value(1, 1) == board.get_value(1, 2)
-        set_winner(a_2) 
-        return
-      end
-    end
-
-    a_3 = board.get_value(2, 0)
-    if a_3 != ' '
-      if a_3 == board.get_value(2, 1) == board.get_value(2, 2)
-        set_winner(a_3)
+    c_3 = board.get_value(2, 2)
+    if c_3 != ' '
+      if c_3 == board.get_value(1, 2) == board.get_value(0, 2) || c_3 == board.get_value(2, 1) == board.get_value(2, 0)
+        set_winner(c_3)
         return
       end
     end
