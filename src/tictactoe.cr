@@ -4,28 +4,27 @@ game = Game.new
 
 module Tictactoe
   VERSION = "0.1.0"
-
-  option_parser = OptionParser.parse do |parser|
-    parser.banner = "Welcome to Tic-tac-toe!"
-
-    parser.on "-s", "--single", "Single player game" do
-      puts "Single player mode is is still being worked on."
-      puts "Try two player mode instead."
+  OptionParser.parse do |parser|
+    parser.banner = "Usage: tictactoe [arguments]"
+    parser.on("-s", "--single", "Single player game") do
+      puts "Single player mode is still being worked on. Try two player mode instead."
       exit
     end
-
-    parser.on "-t", "--two", "Two player game" do
+    parser.on("-t", "--two", "Two player game") do
       game.two_player
     end
-
-    parser.on "-v", "--version", "Show version" do
-      puts "Version 0.1.0"
+    parser.on("-v", "--version", "Show version") do
+      puts "Version #{VERSION}"
       exit
     end
-
-    parser.on "-h", "--help", "Show help" do
+    parser.on("-h", "--help", "Show this help") do
       puts parser
       exit
+    end
+    parser.invalid_option do |flag|
+      STDERR.puts "ERROR: #{flag} is not a valid option."
+      STDERR.puts parser
+      exit(1)
     end
   end
 end
@@ -60,7 +59,7 @@ struct Game
     end
 
     puts "\n--------------"
-    puts "Restart? (y/n)"
+    puts "Restart? (y/N)"
     input = gets
     return if input.nil?
     if input.strip.downcase == "y"
@@ -205,7 +204,7 @@ class Board
   end
 
   def print_error(input)
-    puts "Input \"#{input}\" is invalid. Please try again."
+    puts "ERROR: #{input} is not a valid coordinate. Please try again."
     puts "Examples of valid coordinates: a2, c1, 3B, etc."
   end
 
